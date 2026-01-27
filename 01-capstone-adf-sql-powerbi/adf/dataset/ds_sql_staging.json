@@ -1,0 +1,48 @@
+{
+	"name": "ds_sql_staging",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "SaleID",
+				"type": "varchar"
+			},
+			{
+				"name": "CustomerName",
+				"type": "varchar"
+			},
+			{
+				"name": "Product",
+				"type": "varchar"
+			},
+			{
+				"name": "Quantity",
+				"type": "varchar"
+			},
+			{
+				"name": "Price",
+				"type": "varchar"
+			},
+			{
+				"name": "SaleDate",
+				"type": "varchar"
+			},
+			{
+				"name": "LoadDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Staging_Sales"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

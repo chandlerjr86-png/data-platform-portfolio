@@ -1,0 +1,53 @@
+{
+	"name": "ds_customer_interactions",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_blob_raw",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "customer_interactions.csv",
+				"container": "raw"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "InteractionID",
+				"type": "String"
+			},
+			{
+				"name": "CustomerID",
+				"type": "String"
+			},
+			{
+				"name": "ServiceType",
+				"type": "String"
+			},
+			{
+				"name": "InteractionDate",
+				"type": "String"
+			},
+			{
+				"name": "DurationMinutes",
+				"type": "String"
+			},
+			{
+				"name": "ResolutionStatus",
+				"type": "String"
+			},
+			{
+				"name": "AgentRating",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

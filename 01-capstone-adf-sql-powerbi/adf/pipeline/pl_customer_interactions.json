@@ -1,0 +1,148 @@
+{
+	"name": "pl_customer_interactions",
+	"properties": {
+		"activities": [
+			{
+				"name": "pl_customer_interactions",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "InteractionID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InteractionID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ServiceType",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ServiceType",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "InteractionDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "InteractionDate",
+									"type": "Date",
+									"physicalType": "date"
+								}
+							},
+							{
+								"source": {
+									"name": "DurationMinutes",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "DurationMinutes",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							},
+							{
+								"source": {
+									"name": "ResolutionStatus",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ResolutionStatus",
+									"type": "String",
+									"physicalType": "varchar"
+								}
+							},
+							{
+								"source": {
+									"name": "AgentRating",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "AgentRating",
+									"type": "Int32",
+									"physicalType": "int"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_customer_interactions",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_customer_interactions_sql",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-07T20:58:39Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

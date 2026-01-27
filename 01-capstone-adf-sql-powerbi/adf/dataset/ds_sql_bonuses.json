@@ -1,0 +1,33 @@
+{
+	"name": "ds_sql_bonuses",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmployeeID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BonusAmount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Year",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Bonuses"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

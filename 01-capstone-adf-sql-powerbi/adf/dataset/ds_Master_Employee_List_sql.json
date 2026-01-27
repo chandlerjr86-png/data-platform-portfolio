@@ -1,0 +1,49 @@
+{
+	"name": "ds_Master_Employee_List_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmpID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FullName",
+				"type": "varchar"
+			},
+			{
+				"name": "Department",
+				"type": "varchar"
+			},
+			{
+				"name": "HireDate",
+				"type": "date"
+			},
+			{
+				"name": "OfficeLocation",
+				"type": "varchar"
+			},
+			{
+				"name": "Status",
+				"type": "varchar"
+			},
+			{
+				"name": "MonthlyCost",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "AuditEmployees"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,30 @@
+{
+	"name": "pl_gold_transform",
+	"properties": {
+		"activities": [
+			{
+				"name": "sp_Transform_Silver_to_Gold",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_UpsertGoldSales]"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_sql_datapipelinedemo",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-01-12T20:23:27Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

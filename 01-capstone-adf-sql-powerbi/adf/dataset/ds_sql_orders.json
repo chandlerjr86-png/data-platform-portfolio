@@ -1,0 +1,17 @@
+{
+	"name": "ds_sql_orders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "orders"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

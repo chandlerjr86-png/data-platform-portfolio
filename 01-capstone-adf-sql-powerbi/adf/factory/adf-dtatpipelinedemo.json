@@ -1,0 +1,9 @@
+{
+	"name": "adf-dtatpipelinedemo",
+	"location": "southcentralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e91ad65b-827a-4a1e-8fe8-05f1ca6feb85",
+		"tenantId": "dfbd3a9b-f8bc-4716-be75-e202b1aa87c1"
+	}
+}

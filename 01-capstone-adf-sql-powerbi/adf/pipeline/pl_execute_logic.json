@@ -1,0 +1,121 @@
+{
+	"name": "pl_execute_logic",
+	"properties": {
+		"activities": [
+			{
+				"name": "sp_execute_logic",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_DeactivateBob]",
+					"storedProcedureParameters": {
+						"EmployeeName": {
+							"value": "Charlie Davis",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_sql_datapipelinedemo",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "GetSalesTeam",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT FullName FROM dbo.AuditEmployees WHERE Department = '@{pipeline().parameters.TargetDepartment}'",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_Master_Employee_List_sql",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach_Deactivate_Employees",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetSalesTeam",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetSalesTeam').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Run_Deactivation",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[sp_DeactivateBob]",
+								"storedProcedureParameters": {
+									"EmployeeName": {
+										"value": {
+											"value": "@item().FullName",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "ls_sql_datapipelinedemo",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"TargetDepartment": {
+				"type": "string",
+				"defaultValue": "Marketing"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-09T21:30:49Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

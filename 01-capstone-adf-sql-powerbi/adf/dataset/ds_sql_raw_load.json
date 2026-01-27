@@ -1,0 +1,28 @@
+{
+	"name": "ds_sql_raw_load",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "RawData",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LoadDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Staging_Sales_Raw"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

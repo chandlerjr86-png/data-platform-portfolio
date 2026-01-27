@@ -1,0 +1,50 @@
+{
+	"name": "ds_customer_interactions_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "InteractionID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ServiceType",
+				"type": "varchar"
+			},
+			{
+				"name": "InteractionDate",
+				"type": "date"
+			},
+			{
+				"name": "DurationMinutes",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ResolutionStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "AgentRating",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "CustomerInteractions"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

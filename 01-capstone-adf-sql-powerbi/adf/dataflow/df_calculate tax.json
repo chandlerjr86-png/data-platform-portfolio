@@ -1,0 +1,68 @@
+{
+	"name": "df_calculate tax",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "large_sales",
+						"type": "DatasetReference"
+					},
+					"name": "SalesFiles"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "large_sales_sql",
+						"type": "DatasetReference"
+					},
+					"name": "DestinationTable"
+				}
+			],
+			"transformations": [
+				{
+					"name": "TotalWithTax"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          TransID as string,",
+				"          CustomerID as string,",
+				"          ItemID as string,",
+				"          Amount as string,",
+				"          TransDate as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SalesFiles",
+				"SalesFiles derive(TotalWithTax = toDecimal(Amount)*1.1) ~> TotalWithTax",
+				"TotalWithTax sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          TransID as integer,",
+				"          CustomerID as integer,",
+				"          ItemID as string,",
+				"          Amount as decimal(10,2),",
+				"          TransDate as date",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          TransID,",
+				"          CustomerID,",
+				"          ItemID,",
+				"          Amount = TotalWithTax,",
+				"          TransDate",
+				"     )) ~> DestinationTable"
+			]
+		}
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "ds_test_lookup_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_datapipelinedemo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "JobName",
+				"type": "varchar"
+			},
+			{
+				"name": "IsReady",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "JobStatus"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

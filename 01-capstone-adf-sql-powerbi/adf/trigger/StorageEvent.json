@@ -1,0 +1,24 @@
+{
+	"name": "StorageEvent",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_Master_Employee_List",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/raw/blobs/Master_Employee",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/7974f700-1be0-4cac-9f1f-90124fff9413/resourceGroups/rg-azure-data-pipeline-demo/providers/Microsoft.Storage/storageAccounts/stadatapipelinedemo",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
