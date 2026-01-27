@@ -1,0 +1,6 @@
+{
+	"name": "ir-sh-aw-local",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
