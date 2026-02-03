@@ -1,0 +1,272 @@
+--- =========================================================
+-- 📘 SQL BOILERPLATE REFERENCE (T-SQL / SSMS)
+-- =========================================================
+-- Logical execution order:
+-- FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → OFFSET/FETCH
+
+
+-- =========================================================
+-- SELECT BASICS
+-- =========================================================
+SELECT * FROM TableName;
+SELECT column1, column2 FROM TableName;
+
+
+-- =========================================================
+-- FILTERING
+-- =========================================================
+SELECT * FROM TableName WHERE column = value;
+SELECT * FROM TableName WHERE column > value;
+SELECT * FROM TableName WHERE column IN ('A','B','C');
+SELECT * FROM TableName WHERE column BETWEEN 100 AND 200;
+SELECT * FROM TableName WHERE column1 = 'X' AND column2 > 1000;
+
+
+-- 🔹 NULL-safe comparison (cleaner than OR IS NULL)
+SELECT *
+FROM Sales.Customers
+WHERE region IS DISTINCT FROM N'WA';
+
+
+-- =========================================================
+-- SORTING
+-- =========================================================
+SELECT * FROM TableName ORDER BY column ASC;
+SELECT * FROM TableName ORDER BY column1 DESC, column2 DESC;
+
+
+-- =========================================================
+-- DISTINCT
+-- =========================================================
+SELECT DISTINCT column FROM TableName;
+
+
+-- =========================================================
+-- LIKE / WILDCARDS
+-- =========================================================
+SELECT * FROM TableName WHERE column LIKE 'A%';
+SELECT * FROM TableName WHERE column LIKE '%Z';
+SELECT * FROM TableName WHERE column LIKE '%X%';
+SELECT * FROM TableName WHERE column LIKE 'A_C%';
+
+
+-- =========================================================
+-- AGGREGATES
+-- =========================================================
+SELECT MIN(column), MAX(column), AVG(column) FROM TableName;
+SELECT COUNT(column) FROM TableName;
+SELECT COUNT(*) FROM TableName;
+
+
+-- =========================================================
+-- GROUP BY / HAVING
+-- =========================================================
+SELECT column1, SUM(column2) AS TotalValue
+FROM TableName
+GROUP BY column1
+HAVING SUM(column2) > 1000;
+
+
+-- =========================================================
+-- TOP / OFFSET-FETCH
+-- =========================================================
+-- Recent N rows
+SELECT TOP (5) orderid, orderdate, custid, empid
+FROM Sales.Orders
+ORDER BY orderdate DESC;
+
+-- Deterministic TOP (preferred)
+SELECT TOP (5) orderid, orderdate, custid, empid
+FROM Sales.Orders
+ORDER BY orderdate DESC, orderid DESC;
+
+-- Pagination (UI / API use case)
+SELECT orderid, orderdate, custid, empid
+FROM Sales.Orders
+ORDER BY orderdate, orderid
+OFFSET 300 ROWS FETCH NEXT 100 ROWS ONLY;
+
+
+-- =========================================================
+-- DATE & TIME
+-- =========================================================
+SELECT GETDATE();
+SELECT DATEADD(MONTH, -1, GETDATE());
+SELECT DATEDIFF(DAY, '2024-01-01', GETDATE());
+SELECT EOMONTH(GETDATE());
+
+
+-- 🔹 GREATEST / LEAST (business-friendly date logic)
+SELECT orderid,
+       GREATEST(requireddate, shippeddate) AS latestdate
+FROM Sales.Orders;
+
+
+-- =========================================================
+-- DATA TYPES
+-- =========================================================
+CREATE TABLE Example (
+  price DECIMAL(12,2),
+  name  VARCHAR(100),
+  notes NVARCHAR(MAX)
+);
+
+
+-- =========================================================
+-- TYPE CONVERSION
+-- =========================================================
+SELECT CAST('20' AS INT);
+SELECT CONVERT(INT, '20');
+SELECT TRY_CAST('abc' AS INT);
+
+
+-- =========================================================
+-- JOINS
+-- =========================================================
+SELECT *
+FROM FactInternetSales F
+JOIN DimProduct P
+  ON F.ProductKey = P.ProductKey;
+
+
+-- =========================================================
+-- SET OPERATIONS
+-- =========================================================
+SELECT col FROM TableA
+UNION ALL
+SELECT col FROM TableB;
+
+SELECT col FROM TableA
+EXCEPT
+SELECT col FROM TableB;
+
+
+-- =========================================================
+-- CASE EXPRESSIONS
+-- =========================================================
+SELECT ProductKey,
+       CASE
+         WHEN ListPrice >= 3000 THEN 'HIGH'
+         WHEN ListPrice >= 2000 THEN 'AVG'
+         ELSE 'LOW'
+       END AS PriceCategory
+FROM DimProduct;
+
+
+-- =========================================================
+-- SUBQUERIES
+-- =========================================================
+SELECT *
+FROM FactInternetSales
+WHERE SalesAmount >
+  (SELECT AVG(SalesAmount) FROM FactInternetSales);
+
+
+-- =========================================================
+-- WINDOW FUNCTIONS (REFERENCE)
+-- =========================================================
+SELECT EmpName, Salary,
+       ROW_NUMBER() OVER (PARTITION BY Department ORDER BY Salary DESC) AS rn
+FROM Employees;
+
+
+-- =========================================================
+-- STRING SEARCH & PATTERNS
+-- =========================================================
+SELECT CHARINDEX('-', 'INV-2024-0031');        -- exact match
+SELECT PATINDEX('%[0-9]%', 'INV-2024-0031');   -- pattern search
+
+
+-- =========================================================
+-- STRING TRANSFORMATION
+-- =========================================================
+-- Character mapping (safe alternative to nested REPLACE)
+SELECT TRANSLATE('123.456.789,00', '.,', ',.');
+
+-- Repeat string (padding / formatting)
+SELECT REPLICATE('abc', 3);
+
+-- Zero-pad numeric IDs (ETL / integrations)
+SELECT supplierid,
+  RIGHT(REPLICATE('0', 9) + CAST(supplierid AS VARCHAR(10)), 10)
+FROM Production.Suppliers;
+
+-- Fixed-width formatting
+SELECT FORMAT(1759, '0000000000');
+
+-- In-place string surgery
+SELECT STUFF('xyz', 2, 1, 'abc');
+
+
+-- =========================================================
+-- CONCATENATION (NULL-safe)
+-- =========================================================
+-- 🔹 Cleaner than COALESCE chains
+SELECT CONCAT_WS(',', country, region, city) AS location
+FROM Sales.Customers;
+
+
+-- =========================================================
+-- COLLATION (recognition-level only)
+-- =========================================================
+-- 🔹 Case-sensitive comparison
+SELECT lastname
+FROM HR.Employees
+WHERE lastname COLLATE Latin1_General_CS_AS = N'davis';
+
+
+-- =========================================================
+-- COMPRESS / DECOMPRESS
+-- =========================================================
+DECLARE @cv NVARCHAR(MAX) =
+N'Experienced data analyst with SQL, Power BI, and ETL experience...';
+
+-- Store compressed
+SELECT COMPRESS(@cv);
+
+-- Retrieve original text
+SELECT CAST(
+  DECOMPRESS(COMPRESS(@cv)) AS NVARCHAR(MAX)
+);
+
+
+-- =========================================================
+-- STRING_SPLIT
+-- =========================================================
+SELECT CAST(value AS INT)
+FROM STRING_SPLIT('10248,10249,10250', ',');
+
+-- Preserve order (SQL Server 2022+)
+SELECT CAST(value AS INT), ordinal
+FROM STRING_SPLIT('10248,10249,10250', ',', 1);
+
+
+-- =========================================================
+-- STRING_AGG
+-- =========================================================
+SELECT custid,
+  STRING_AGG(CAST(orderid AS VARCHAR(10)), ',')
+    WITHIN GROUP (ORDER BY orderdate DESC, orderid DESC)
+FROM Sales.Orders
+GROUP BY custid;
+
+
+-- =========================================================
+-- GENERATE_SERIES (modern SQL Server)
+-- =========================================================
+-- 🔹 Generate sequences without helper tables
+SELECT value
+FROM GENERATE_SERIES(1, 10);
+
+-- Date series
+SELECT DATEADD(day, value, '20220101')
+FROM GENERATE_SERIES(0, 30);
+
+
+-- =========================================================
+-- METADATA (Information Schema)
+-- =========================================================
+SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'Sales'
+  AND TABLE_NAME = 'Orders';
